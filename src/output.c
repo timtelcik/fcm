@@ -71,6 +71,9 @@
 #include "display.h"
 
 
+// #include <GLFW/glfw3.h>
+
+
 /*************************************************************************
 *                        GLOBAL VARIABLE DECLARATIONS                    *
 *************************************************************************/
@@ -135,41 +138,79 @@ void Display_contour( void )
 *************************************************************************/
 {
 
+	//TODO: Refactor Display_contour and Save_contour
+	//      to use Build_contour function
+
 INDEX i;      /* index to contour */
 REAL nx,ny;   /* normalized x,y */
 
-/* set contour line to solid */
-Set_linestyle(3);
-/* set contour colour to cyan */
+// set contour line to solid
+// TODO: review
+// Set_line_style(3);
+Set_line_style(LINE_STYLE_SOLID);
+Begin_line_style();
+// set contour colour to cyan
 Set_colour(CYAN);
 
-/* check if contour is closed */
-if ( start_seg_two == NO_SEGMENT ) {
- /* draw a single line segment */
- Transform(contour[start_seg_one].x,contour[start_seg_one].y,&nx,&ny);
- Move_to(nx,ny);
- for (i = start_seg_one+1; i <= end_seg_one; i++) {
-      Transform(contour[i].x,contour[i].y,&nx,&ny);
-      Draw_to(nx,ny);
-      }
-}
-/* otherwise contour is open and contains two line segments */
-else
-{
- /* draw second segment */
- Transform(contour[end_seg_two].x,contour[end_seg_two].y,&nx,&ny);
- Move_to(nx,ny);
- for (i = end_seg_two-1; i > end_seg_one; i--) {
-      Transform(contour[i].x,contour[i].y,&nx,&ny);
-      Draw_to(nx,ny);
-      }
- /* draw first segment */
- for (i = start_seg_one; i <= end_seg_one; i++) {
-      Transform(contour[i].x,contour[i].y,&nx,&ny);
-      Draw_to(nx,ny);
-      }
 
-} /* end if-else */
+// see http://basic4gl.wikispaces.com/2D+Drawing+in+OpenGL
+
+
+	// check if contour defines a peak */
+	if (contour[0].x == contour[1].x && contour[0].y == contour[1].y
+			&& contour[0].z == contour[1].z) {
+		Begin_line();
+		Set_colour(MAGENTA);
+		Transform(contour[0].x, contour[0].y, &nx, &ny);
+		Draw_to(nx, ny);
+		End_line();
+	}
+
+	/* otherwise contour is closed or open */
+	else {
+
+		/* check if contour is closed */
+		if (start_seg_two == NO_SEGMENT) {
+			printf("Begin loop \n");
+			/* write a single line segment */
+			Begin_line_loop();
+			Set_colour(BLUE);
+			for (i = start_seg_one; i <= end_seg_one; i++) {
+				Transform(contour[i].x, contour[i].y, &nx, &ny);
+				Draw_to(nx, ny);
+			}
+			End_line_loop();
+			printf("End loop \n");
+		}
+
+		// otherwise contour is open and contains two line segments
+		else {
+
+			// write second line segment
+			printf("begin second line seg \n");
+			Begin_line_strip();
+			Set_colour(GREEN);
+			for (i = end_seg_two; i > end_seg_one; i--) {
+				Transform(contour[i].x, contour[i].y, &nx, &ny);
+				Draw_to(nx, ny);
+			}
+			// End_line();
+			printf("End second line seg \n");
+
+			// write first line segment
+			printf("begin first line seg \n");
+			Set_colour(YELLOW);
+			for (i = start_seg_one; i <= end_seg_one; i++) {
+				Transform(contour[i].x, contour[i].y, &nx, &ny);
+				Draw_to(nx, ny);
+			}
+			End_line_strip();
+			printf("End first line seg \n");
+
+		} // end if closed contour else open contour
+	} // end else contour is closed or open
+
+	End_line_style();
 
 } /* -- END OF FUNCTION -- */
 
@@ -218,55 +259,77 @@ void Display_network( void )
 {
 
 REAL nx,ny;              /* normalized (x,y) point */
-BOOLEAN found_pt,        /* flag for whether a point has been found */
-       end_of_nbrs;      /* flag for whether at end of neighbour list */
 INDEX pt_id;             /* current points's id */
 INDEX nbr_id;            /* current neighbour's id */
 TIN_NBR_PTR nbr;         /* pointer to current neighbour  */
 
 
-/* display edges with a dotted line */
-Set_linestyle(1);
-/* display TIN in light gray */
-Set_colour(WHITE);
 
-/* initialise current tin point */
+printf("BEGIN Display network \n");
+
+
+// display edges with a dotted line
+// TODO: review
+// Set_line_style(1);
+// Set_line_style(LINE_STYLE_DOTTED);
+Begin_line_style();
+// display TIN in light gray
+// Set_colour(WHITE);
+// display TIN in green
+// Set_colour(GREEN);
+Set_colour(CYAN);
+
+// TODO: move GL functions to OPENGL driver file
+// http://www.felixgers.de/teaching/jogl/stippledLines.html
+Set_line_style(LINE_STYLE_DASHED);
+// glLineStipple(1, 0xAAAA);
+// glEnable(GL_LINE_STIPPLE);
+Begin_line_style();
+
+// initialise current tin point
 pt_id = first_pt_id;
-/* while not at end of TIN points connect points with their neighbours */
+// while not at end of TIN points connect points with their neighbours
 while (pt_id <= last_pt_id) {
 
-     /* flag the current point as visited */
+	Begin_line();
+
+     // flag the current point as visited
      points[pt_id].visited = TRUE;
-     /* initialise neighbour pointer to first neighbour */
+     // initialise neighbour pointer to first neighbour
      nbr = points[pt_id].first_nbr;
-     /* repeat while not at end of neighbour list */
+     // repeat while not at end of neighbour list
      do {
-         /* get the neighbour's id */
+         // get the neighbour's id
          nbr_id = nbr->nbrid;
-         /* check if the neighbour point has not been visited and does
-               not point outside TIN */
+         // check if the neighbour point has not been visited and does not point outside TIN
          if (!points[nbr_id].visited && nbr_id != OUTSIDE_TIN) {
 
-            /* draw a line from the current point to its neighbour */
-            Transform(points[pt_id].coord.x, points[pt_id].coord.y,
-                      &nx,&ny);
-            Move_to(nx,ny);
-            Transform(points[nbr_id].coord.x, points[nbr_id].coord.y,
-                      &nx,&ny);
-            Draw_to(nx,ny);
+             // draw a line from the current point to its neighbour
+             Transform(points[pt_id].coord.x, points[pt_id].coord.y, &nx,&ny);
+             Move_to(nx,ny);
+             Transform(points[nbr_id].coord.x, points[nbr_id].coord.y, &nx,&ny);
+             Draw_to(nx,ny);
 
-         } /* end if */
-         /* goto next neighbour */
+         } // end if
+         // goto next neighbour
          nbr = nbr->next;
      } while (nbr != NULL);
 
-/* goto next TIN point in array */
-pt_id++;
-} /* end while pt_id != NULL */
+	 End_line();
 
-/* reset visited flags on all TIN points */
-for (pt_id = first_pt_id; pt_id <= last_pt_id; pt_id++)
+// goto next TIN point in array
+pt_id++;
+} // end while pt_id != NULL
+
+// reset visited flags on all TIN points
+for (pt_id = first_pt_id; pt_id <= last_pt_id; pt_id++) {
     points[pt_id].visited = FALSE;
+}
+
+// glDisable(GL_LINE_STIPPLE);
+End_line_style();
+
+printf("END Display network \n");
 
 } /* -- END OF FUNCTION -- */
 
@@ -423,7 +486,9 @@ void Display_title( void )
 {
 
 /* clear the screen */
-clrscr();
+// TODO: revise
+// clrscr();
+
 /* display title */
 printf("\t\t\t================================\n");
 printf("\t\t\t Falcon Contour Map Version 1.0 \n");

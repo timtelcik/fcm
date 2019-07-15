@@ -139,40 +139,43 @@ TIN_EDGE starting_edge;      /* starting edge for current contour */
 BOOLEAN degenerate_contour;  /* whether contour is degenerate */
 
 
-/* loop through the contour interval specified by the user */
+// loop through the contour interval specified by the user
 contour_height = lower_contour;
 while (contour_height <= upper_contour) {
 
-    found_edge = TRUE;
-    while (found_edge) {
+		found_edge = TRUE;
+		while (found_edge) {
 
-	 /* find a starting edge crossed by the contour height */
-	 starting_edge = Find_starting_edge(contour_height, &found_edge);
+			// find a starting edge crossed by the contour height
+			starting_edge = Find_starting_edge(contour_height, &found_edge);
 
-	 /* check if a starting edge was found */
-	 if (found_edge) {
-	    /* track the contour through the TIN */
-	    Track_contour(starting_edge, contour_height, adjust, sample,
-			  &degenerate_contour );
-	    /* check if contour is not degenerate */
-	    if ( !degenerate_contour ) {
-		/* display contour to screen */
-		Display_contour();
-		/* save the contour to a data file if required */
-		if ( save_cont == YES )
-		   Save_contour(cont_file);
-	    } /* end if */
-	 } /* end if */
+			// check if a starting edge was found
+			if (found_edge) {
+				// track the contour through the TIN
+				Track_contour(starting_edge, contour_height, adjust, sample,
+						&degenerate_contour);
 
-    } /* end while */
+				// check if contour is not degenerate
+				if (!degenerate_contour) {
+					// display contour to screen
+					printf("BEGIN Display contour ... \n");
+					Display_contour();
+					printf("END Display contour \n");
+				}
+				// save the contour to a data file if required
+				if (save_cont == YES) {
+					Save_contour(cont_file);
+				}
+			}
 
-    /* reset flags on edges that have been used by this contour height */
-    Reset_edge_flags(contour_height);
+		}
 
-    /* goto next contour level */
-    contour_height = contour_height + contour_interval;
+		// reset flags on edges that have been used by this contour height
+		Reset_edge_flags(contour_height);
 
-} /* end while */
+		// goto next contour level
+		contour_height = contour_height + contour_interval;
+	}
 
 } /* -- END OF FUNCTION -- */
 

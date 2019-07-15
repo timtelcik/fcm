@@ -15,6 +15,9 @@
  * not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef FCM_FALCON_H_INCLUDED
+#define FCM_FALCON_H_INCLUDED
+
 /* FALCON.H
 **************************************************************************
 *  FALCON CONTOUR MAP VERSION 1.0                     2nd Semester 1991  *
@@ -50,7 +53,7 @@ void Open_tin_file( FILE *(*tin_file) );
 void Get_contour_info( REAL zmin, REAL zmax,
                        REAL *lower_contour, REAL *upper_contour,
                        REAL *contour_interval );
-void Get_smoothing_factor( REAL *adjust , REAL *sample );
+void Get_smoothing_info( REAL *adjust, REAL *sample );
 void Prompt_reply(char prompt[MAX_STRING], BOOLEAN default_reply,
         BOOLEAN *reply);
 void Prompt_value( char prompt[MAX_STRING], REAL *value,
@@ -116,4 +119,6 @@ void Track_contour( TIN_EDGE starting_edge, REAL contour_height,
 /*************************************************************************
 *                    END OF FALCON FUNCTION PROTOYPES                    *
 *************************************************************************/
+
+#endif // FCM_FALCON_H_INCLUDED
 

@@ -15,6 +15,9 @@
  * not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef FCM_TYPES_H_INCLUDED
+#define FCM_TYPES_H_INCLUDED
+
 /* TYPES.H
 **************************************************************************
 *  FALCON CONTOUR MAP VERSION 1.0                     2nd Semester 1991  *
@@ -97,4 +100,6 @@ typedef struct {
 /*************************************************************************
 *                     END OF FALCON TYPE DEFINITIONS                     *
 *************************************************************************/
+
+#endif // FCM_TYPES_H_INCLUDED
 

@@ -331,7 +331,8 @@ void Sample_spline( REAL i0, REAL j0, REAL i1, REAL j1,
 **************************************************************************/
 {
 
-REAL t0, t1, t2, t3, t5;  /* parametric terms */
+// REAL t0, t1, t2, t3, t5;  /* parametric terms */
+REAL t1, t2, t3, t5;      /* parametric terms */
 REAL dt;                  /* sampling rate as a function of t */
 REAL dist;                /* distance between end points */
 REAL W;                   /* curve weighting factor */

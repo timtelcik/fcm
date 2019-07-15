@@ -15,10 +15,10 @@
  * not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FCM_DISPLAY_H_INCLUDED
-#define FCM_DISPLAY_H_INCLUDED
+#ifndef FCM_OPENGL_H_INCLUDED
+#define FCM_OPENGL_H_INCLUDED
 
-/* DISPLAY.H
+/* OPENGL_DRV.H
 **************************************************************************
 *  FALCON CONTOUR MAP VERSION 1.0                     2nd Semester 1991  *
 *  Copyright (c) 1991 Tim Telcik                                         *
@@ -33,88 +33,71 @@
 
 **************************************************************************
 *  FALCON CONTOUR MAP VERSION 1.0                                        *
-*  DISPLAY FUNCTIONS PROTOTYPE HEADER                                    *
+*  OPENGL GRAPHICS DRIVER HEADER                                         *
 *                                                                        *
 *  Written by TIm Telcik                                                 *
 *  Last Update: 5th October 1991                                         *
+*  Last Update: 2nd November 2013                                        *
 *                                                                        *
-*  Purpose: Contains the function prototypes for the display routines.   *
+*  Purpose: Contains the function prototypes for the device dependent    *
+*	        display routines in OPENGL_DRV.C                         *
 *************************************************************************/
 
 /*************************************************************************
-*                  START OF DISPLAY HEADER                               *
+*     START OF MACHINE DEPENDENT FUNCTION PROTOTYPES FOR OPENGL
 *************************************************************************/
 
-//
-// Display Prototypes
-//
-
-void Activate_graphics( void );
-void Deactivate_graphics( void );
-void Draw_to( REAL x, REAL y );
-void Draw_text( REAL x, REAL y, char text[] );
-void Draw_border( void );
-void Draw_border_coords( REAL wxmin, REAL wymin, REAL wxmax, REAL wymax );
-void Draw_cont_info( REAL lower_contour, REAL upper_contour, REAL contour_interval );
-void Graphics_pause( void );
-void Move_to( REAL x, REAL y );
-void Set_colour( int col );
-void Begin_line_style( void );
-void End_line_style( void );
-void Set_line_style( int line_type );
-void Set_viewport( REAL xmin, REAL ymin, REAL xmax, REAL ymax );
-void Set_window( REAL xmin, REAL ymin, REAL xmax, REAL ymax );
-void Transform( REAL x, REAL y, REAL *nx, REAL *ny );
-void Flush_graphics( void );
-BOOLEAN Is_graphics_active( void );
-void Poll_events( void );
-void Begin_line_loop( void );
-void Begin_line( void );
-void Begin_line_strip( void );
-void End_line_loop( void );
-void End_line( void );
-void End_line_strip( void );
+void OPENGL_Activate_graphics( void );
+void OPENGL_Deactivate_graphics( void );
+void OPENGL_Move_to( REAL x, REAL y );
+void OPENGL_Draw_border( void );
+// void OPENGL_Draw_text( int x,int y,char string[] );
+void OPENGL_Draw_text( REAL x,REAL y,char string[] );
+void OPENGL_Draw_to( REAL x, REAL y );
+void OPENGL_Graphics_pause( void );
+void OPENGL_Set_colour( int col );
+void OPENGL_Set_line_style( int line_type );
+void OPENGL_Begin_line_style( void );
+void OPENGL_End_line_style( void );
+void OPENGL_Flush_graphics( void );
+BOOLEAN OPENGL_Is_graphics_active( void );
+void OPENGL_Poll_events( void );
+void OPENGL_Begin_line_loop( void );
+void OPENGL_Begin_line( void );
+void OPENGL_Begin_line_strip( void );
+void OPENGL_End_line_loop( void );
+void OPENGL_End_line( void );
+void OPENGL_End_line_strip( void );
 
 
-//
-// Graphics Driver Definitions
-//
+/*************************************************************************
+*     INCLUDES
+*************************************************************************/
 
-#define FCM_GRAPHICS_DRIVER_OPENGL "OPENGL"
-#define FCM_GRAPHICS_DRIVER_BGI "BGI"
-#define FCM_GRAPHICS_DRIVER_IRISGL "IRISGL"
+// INCLUDE OPENGL GRAPHICS LIBRARY HEADER
+// #include <gl.h>
+// #include <glu.h>
+// #include <glut.h>
 
-// Define graphics drivers
-#ifndef FCM_GRAPHICS_DRIVER
-#define FCM_GRAPHICS_DRIVER FCM_GRAPHICS_DRIVER_OPENGL
-#endif
+// INCLUDE MACOSX OPENGL GRAPHICS LIBRARY HEADER */
+// see http://alumni.cs.ucsb.edu/~wombatty/tutorials/opengl_mac_osx.html
+// see http://stackoverflow.com/questions/12229714/building-glew-for-mac-osx
+// see http://www.opengl-tutorial.org/beginners-tutorials/tutorial-1-opening-a-window/
+// see http://msdn.microsoft.com/en-us/library/windows/desktop/dd374286%28v=vs.85%29.aspx
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <GLUT/glut.h>
 
-// INCLUDE IBM PC DEVICE DRIVER HEADER
-// #include "pc_drv.h"
+// INCLUDE GLFW HEADER
+// see http://www.glfw.org
+#include <GLFW/glfw3.h>
 
-// INCLUDE IRIS DEVICE DRIVER HEADER
-// #include "iris_drv.h"
-
-
-//
-// Includes
-//
-
-// INCLUDE OPENGL DEVICE DRIVER HEADER
-// #if FCM_GRAPHICS_DRIVER == FCM_GRAPHICS_DRIVER_OPENGL
-#ifdef FCM_GRAPHICS_DRIVER_OPENGL
 #include "gl_color.h"
-#include "opengl_drv.h"
-#endif
-
-/*************************************************************************
-*                  START OF GRAPHICS DRIVER DEFINITIONS                  *
-*************************************************************************/
 
 
 /*************************************************************************
-*                  END OF DISPLAY FUNCTION PROTOTYPES                    *
+*       END OF MACHINE DEPENDENT FUNCTION PROTOTYPES FOR OPENGL          *
 *************************************************************************/
 
-#endif // FCM_DISPLAY_H_INCLUDED
+#endif // FCM_OPENGL_H_INCLUDED
 

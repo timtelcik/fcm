@@ -41,7 +41,7 @@
 *  -----------------                                                     *
 *  Eoln                                                                  *
 *  Get_contour_info                                                      *
-*  Get_smoothing_factor                                                  *
+*  Get_smoothing_info                                                    *
 *  Open_cont_file                                                        *
 *  Open_tin_file                                                         *
 *  Prompt_reply                                                          *
@@ -415,9 +415,10 @@ do {
    /* display prompt */
    printf("%s [%c] ? ",prompt,temp_reply);
    /* get temp. reply from keyboard and convert to upper case */
-   if (!Eoln(stdin))
-       temp_reply = tolower(getc(stdin));
-   while(fgetc(stdin) != CR);
+   if (!Eoln(stdin)) {
+       // temp_reply = tolower(getc(stdin));
+       temp_reply = getc(stdin);
+   } while(fgetc(stdin) != CR);
 } while ( temp_reply != YES && temp_reply != NO );
 
 /* get reply */

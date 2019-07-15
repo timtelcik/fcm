@@ -15,6 +15,9 @@
  * not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef FCM_CONST_H_INCLUDED
+#define FCM_CONST_H_INCLUDED
+
 /* CONST.H
 **************************************************************************
 *  FALCON CONTOUR MAP VERSION 1.0                     2nd Semester 1991  *
@@ -42,10 +45,14 @@
 *                  START OF FALCON CONSTANT DEFINITIONS                  *
 *************************************************************************/
 
+//
+// General
+//
+
 #define MAX_POINTS 120   /* maximum number of TIN points */
 #define MAX_EDGES MAX_POINTS*5   /* maximum number of TIN edges */
 #define MAX_CONT_PTS 500 /* maximum no. points in a contour */
-#define DEBUG 0          /* set by the programmer when debugging topology
+#define DEBUG 1          /* set by the programmer when debugging topology
 			    0 - debugging off
 			    1 - debugging on  */
 
@@ -71,7 +78,32 @@
 #define MIN_SAMPLE 0.1   /* minimum spline sampling interval */
 #define MAX_SAMPLE 10.0  /* maximum spline sampling interval */
 
+#define FALCON_VERSION_LABEL "Falcon Contour Map 1.0"
+
+
+//
+// Line Styles
+//
+
+#define LINE_STYLE_DOTTED 1
+#define LINE_STYLE_DASHED 2
+#define LINE_STYLE_SOLID 3
+#define LINE_STYLE_DASHED_DOTTED 4
+
+
+//
+// Colours
+//
+
+// http://www.tayloredmktg.com/rgb/
+
+#define COL_GRAY 100
+#define COL_LIGHT_GRAY 101
+
+
 /*************************************************************************
 *                    END OF FALCON CONSTANT DEFINITIONS                  *
 *************************************************************************/
+
+#endif // FCM_CONST_H_INCLUDED
 

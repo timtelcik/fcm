@@ -43,8 +43,8 @@
 *  have been isolated from this code so that these routines are device   *
 *  independent.                                                          *
 *                                                                        *
-*  If you want to write your own device drivers see files 'PC_DRV.C' and *
-*  'IRIS_DRV.C' to see how the device drivers have been set up.          *
+*  If you want to write your own device drivers see files 'OPENGL_DRV.C' *
+*  and 'IRIS_DRV.C' to see how the device drivers have been set up.      *
 *  Change the calling names in the DISPLAY routines to the names of your *
 *  device drivers.                                                       *
 *                                                                        *
@@ -60,7 +60,7 @@
 *  Graphics_pause                                                        *
 *  Move_to                                                               *
 *  Set_colour                                                            *
-*  Set_linestyle                                                         *
+*  Set_line_style                                                        *
 *  Set_viewport                                                          *
 *  Set_window                                                            *
 *  Transform                                                             *
@@ -90,10 +90,10 @@
 *                             DECLARE GLOBAL VARIABLES                   *
 *************************************************************************/
 
-RECTANGLE Window;       /* World coordinate (WC) window */
-RECTANGLE Viewport;     /* Normalized device coordinate (NDC) viewport */
-int  ScreenWidth,
-     ScreenHeight;      /* Screen dimensions */
+RECTANGLE Window;       // World coordinate (WC) window
+RECTANGLE Viewport;     // Normalized device coordinate (NDC) viewport
+int ScreenWidth;        // Screen width
+int ScreenHeight;       // Screen height
 
 
 /*************************************************************************
@@ -114,7 +114,7 @@ void Activate_graphics( void )
 *                                                                        *
 *  Calls                                                                 *
 *  -----                                                                 *
-*  PC_Activate_graphics                                                  *
+*  OPENGL_Activate_graphics                                              *
 *                                                                        *
 *  Outputs                                                               *
 *  -------                                                               *
@@ -123,8 +123,9 @@ void Activate_graphics( void )
 {
 
 /* call device dependent routine */
-PC_Activate_graphics();
-/* IRIS_Activate_graphics(); */
+#ifdef FCM_GRAPHICS_DRIVER_OPENGL
+OPENGL_Activate_graphics();
+#endif
 
 } /* -- END OF FUNCTION -- */
 
@@ -143,7 +144,7 @@ void Deactivate_graphics( void )
 *                                                                        *
 *  Calls                                                                 *
 *  -----                                                                 *
-*  PC_Deactivate_graphics                                                *
+*  OPENGL_Deactivate_graphics                                            *
 *                                                                        *
 *  Outputs                                                               *
 *  -------                                                               *
@@ -152,10 +153,28 @@ void Deactivate_graphics( void )
 {
 
 /* call device dependent routine */
-PC_Deactivate_graphics();
-/* IRIS_Deactivate_graphics(); */
+OPENGL_Deactivate_graphics();
+// IRIS_Deactivate_graphics();
 
 } /* -- END OF FUNCTION -- */
+
+
+/**
+* Returns TRUE if graphics mode is active
+*/
+BOOLEAN Is_graphics_active( void ) {
+	return OPENGL_Is_graphics_active();
+}
+
+
+/*************************************************************************
+*                                                                        *
+* Poll keyboard and mouse events.                                        *
+*                                                                        *
+*************************************************************************/
+void Poll_events( void ) {
+   OPENGL_Poll_events();
+}
 
 
 void Draw_border( void )
@@ -173,7 +192,7 @@ void Draw_border( void )
 *                                                                        *
 *  Calls                                                                 *
 *  -----                                                                 *
-*  PC_Draw_border                                                        *
+*  OPENGL_Draw_border                                                    *
 *                                                                        *
 *  Outputs                                                               *
 *  -------                                                               *
@@ -181,9 +200,9 @@ void Draw_border( void )
 *************************************************************************/
 {
 
-/* call device dependent routine */
-PC_Draw_border();
-/* IRIS_Draw_border(); */
+// call device dependent routine
+OPENGL_Draw_border();
+// IRIS_Draw_border();
 
 } /* -- END OF FUNCTION -- */
 
@@ -216,7 +235,9 @@ void Draw_border_coords( REAL wxmin, REAL wymin, REAL wxmax, REAL wymax )
 char coord[90];   /* string containing coordinates */
 char num[40];     /* string containing number */
 
-/* convert coords of lower left vertex to a string and display */
+printf("Draw_borer_coords: (%.2f,%.2f) (%.2f,%.2f) \n", wxmin, wymin, wxmax, wymax );
+
+// convert coords of lower left vertex to a string and display
 strcpy(coord,"(");
 sprintf(num,"%.0f",floor(wxmin));
 strcat(coord,num);
@@ -224,9 +245,9 @@ strcat(coord,",");
 sprintf(num,"%.0f",floor(wymin));
 strcat(coord,num);
 strcat(coord,")");
-Draw_text(0.05*ScreenWidth,0.1*ScreenHeight,coord);
+Draw_text(0.05, 0.1, coord);
 
-/* convert coordinates of upper right vertex to a string and display */
+// convert coordinates of upper right vertex to a string and display
 strcpy(coord,"(");
 sprintf(num,"%.0f",ceil(wxmax));
 strcat(coord,num);
@@ -234,7 +255,7 @@ strcat(coord,",");
 sprintf(num,"%.0f",ceil(wymax));
 strcat(coord,num);
 strcat(coord,")");
-Draw_text(0.75*ScreenWidth,0.9*ScreenHeight,coord);
+Draw_text(0.75, 0.9, coord);
 
 } /* -- END OF FUNCTION -- */
 
@@ -269,7 +290,7 @@ void Draw_cont_info( REAL lower_contour, REAL upper_contour,
 char title[100];      /* string containing title */
 char num[40];        /* string containing number */
 
-/* convert contour info. to a string and display */
+// convert contour info. to a string and display
 strcpy(title,"Contour Range: ");
 sprintf(num,"%.2f",lower_contour);
 strcat(title,num);
@@ -279,7 +300,7 @@ strcat(title,num);
 strcat(title," ; Contour Interval: ");
 sprintf(num,"%.2f",contour_interval);
 strcat(title,num);
-Draw_text(0.2*ScreenWidth,0.95*ScreenHeight,title);
+Draw_text(0.2,0.95,title);
 
 } /* -- END OF FUNCTION -- */
 
@@ -299,7 +320,7 @@ void Draw_to( REAL x, REAL y )
 *                                                                        *
 *  Calls                                                                 *
 *  -----                                                                 *
-*  PC_Draw_to                                                            *
+*  OPENGL_Draw_to                                                        *
 *                                                                        *
 *  Outputs                                                               *
 *  -------                                                               *
@@ -308,13 +329,13 @@ void Draw_to( REAL x, REAL y )
 {
 
 /* call device dependent routine */
-PC_Draw_to(x,y);
-/* IRIS_Draw_to(x,y); */
+OPENGL_Draw_to(x,y);
+// IRIS_Draw_to(x,y);
 
 } /* -- END OF FUNCTION -- */
 
 
-void Draw_text( int x, int y, char string[] )
+void Draw_text( REAL x, REAL y, char text[] )
 /*************************************************************************
 *  Function: Draw_text                                                   *
 *                                                                        *
@@ -324,12 +345,12 @@ void Draw_text( int x, int y, char string[] )
 *                                                                        *
 *  Inputs                                                                *
 *  ------                                                                *
-*  Parameter: x,y    - screen coordinate                                 *
-*             string - text string to be displayed                       *
+*  Parameter: x,y    - NDC coordinates                                   *
+*             text - text string to be displayed                         *
 *                                                                        *
 *  Calls                                                                 *
 *  -----                                                                 *
-*  PC_Draw_text                                                          *
+*  OPENGL_Draw_text                                                      *
 *                                                                        *
 *  Outputs                                                               *
 *  -------                                                               *
@@ -337,9 +358,9 @@ void Draw_text( int x, int y, char string[] )
 *************************************************************************/
 {
 
-/* call device dependent routine */
-PC_Draw_text(x,y,string);
-/* IRIS_Draw_text(x,y,string); */
+// call device dependent routine
+OPENGL_Draw_text(x,y,text);
+// IRIS_Draw_text(x,y,string);
 
 } /* -- END OF FUNCTION -- */
 
@@ -358,7 +379,7 @@ void Graphics_pause( void )
 *                                                                        *
 *  Calls                                                                 *
 *  -----                                                                 *
-*  PC_Graphics_pause                                                     *
+*  OPENGL_Graphics_pause                                                 *
 *  Draw_text                                                             *
 *                                                                        *
 *  Outputs                                                               *
@@ -367,13 +388,14 @@ void Graphics_pause( void )
 *************************************************************************/
 {
 
-/* prompt user to exit contour display */
-Draw_text(0.30*ScreenWidth,0.1*ScreenHeight,
-          "** Contouring Finished. Press RETURN. **");
+// prompt user to exit contour display
+/*
+Draw_text( 0.30, 0.1, "** Contouring Finished. Press RETURN. **" );
+*/
 
-/* call device dependent routine */
-PC_Graphics_pause();
-/* IRIS_Graphics_pause(); */
+// call device dependent routine
+OPENGL_Graphics_pause();
+// IRIS_Graphics_pause();
 
 } /* -- END OF FUNCTION -- */
 
@@ -392,7 +414,7 @@ void Move_to( REAL x, REAL y )
 *                                                                        *
 *  Calls                                                                 *
 *  -----                                                                 *
-*  PC_Move_to                                                            *
+*  OPENGL_Move_to                                                            *
 *                                                                        *
 *  Outputs                                                               *
 *  -------                                                               *
@@ -401,8 +423,8 @@ void Move_to( REAL x, REAL y )
 {
 
 /* call device dependent routine */
-PC_Move_to(x,y);
-/* IRIS_Move_to(x,y); */
+OPENGL_Move_to(x,y);
+// IRIS_Move_to(x,y);
 
 } /* -- END OF FUNCTION -- */
 
@@ -421,7 +443,7 @@ void Set_colour( int col )
 *                                                                        *
 *  Calls                                                                 *
 *  -----                                                                 *
-*  PC_Set_colour                                                         *
+*  OPENGL_Set_colour                                                     *
 *                                                                        *
 *  Outputs                                                               *
 *  -------                                                               *
@@ -430,15 +452,27 @@ void Set_colour( int col )
 {
 
 /* call device dependent routine */
-PC_Set_colour(col);
-/* IRIS_Set_colour(col); */
+OPENGL_Set_colour(col);
+// IRIS_Set_colour(col);
 
 } /* -- END OF FUNCTION -- */
 
 
-void Set_linestyle( int line_type )
+// TODO: add function header
+void Begin_line_style( void ) {
+	OPENGL_Begin_line_style();
+}
+
+
+// TODO: add function header
+void End_line_style( void ) {
+	OPENGL_End_line_style();
+}
+
+
+void Set_line_style( int line_type )
 /*************************************************************************
-*  Function: Set_linestyle                                               *
+*  Function: Set_line_style                                              *
 *                                                                        *
 *  Purpose                                                               *
 *  -------                                                               *
@@ -450,7 +484,7 @@ void Set_linestyle( int line_type )
 *                                                                        *
 *  Calls                                                                 *
 *  -----                                                                 *
-*  PC_Set_linestyle                                                      *
+*  OPENGL_Set_line_style                                                 *
 *                                                                        *
 *  Outputs                                                               *
 *  -------                                                               *
@@ -459,8 +493,8 @@ void Set_linestyle( int line_type )
 {
 
 /* call device dependent routine */
-PC_Set_linestyle(line_type);
-/* IRIS_Set_linestyle(line_type); */
+OPENGL_Set_line_style(line_type);
+// IRIS_Set_line_style(line_type);
 
 } /* -- END OF FUNCTION -- */
 
@@ -489,7 +523,7 @@ void Set_viewport( REAL xmin, REAL ymin, REAL xmax, REAL ymax )
 *************************************************************************/
 {
 
-/* set the viewport */
+// set the viewport
 Viewport.xmin = xmin;
 Viewport.ymin = ymin;
 Viewport.xmax = xmax;
@@ -524,7 +558,7 @@ void Set_window( REAL xmin, REAL ymin, REAL xmax, REAL ymax )
 *************************************************************************/
 {
 
-/* set window */
+// set window
 Window.xmin = xmin;
 Window.ymin = ymin;
 Window.xmax = xmax;
@@ -587,36 +621,86 @@ REAL xvmin, yvmin; /* x and y viewport minimums */
 REAL lxwc, lywc;   /* length of x and y axes in WC */
 REAL lxndc, lyndc; /* length of x and y axes in NDC */
 
-/* get width of window */
+// get width of window
 lxwc = Window.xwidth;
-/* get height of window */
+// get height of window
 lywc = Window.ywidth;
 
-/* get width of viewport */
+// get width of viewport
 lxndc = Viewport.xwidth;
-/* get height of viewport */
+// get height of viewport
 lyndc = Viewport.ywidth;
 
-/* calculate scaling factor for width */
+// calculate scaling factor for width
 sfx = lxwc / lxndc;
-/* calculate scaling factor for height */
+// calculate scaling factor for height
 sfy = lywc / lyndc;
 
-/* get minimum x in window */
+// get minimum x in window
 xwmin = Window.xmin;
-/* get minimum y in window */
+// get minimum y in window
 ywmin = Window.ymin;
-/* get minimum x in viewport */
+// get minimum x in viewport
 xvmin = Viewport.xmin;
-/* get minimum y in viewport */
+// get minimum y in viewport
 yvmin = Viewport.ymin;
 
-/* transform x value from WC to NDC */
+// transform x value from WC to NDC
 *nx = ( (x - xwmin) / sfx ) + xvmin;
-/* transform y value from WC to NDC */
+// transform y value from WC to NDC
 *ny = ( (y - ywmin) / sfy ) + yvmin;
 
 } /* -- END OF FUNCTION -- */
+
+
+void Flush_graphics( void )
+/*************************************************************************
+*  Function: Flush_graphics                                              *
+*                                                                        *
+*  Purpose                                                               *
+*  -------                                                               *
+*  Flush graphic artifacts to display device.                            *
+*************************************************************************/
+{
+   OPENGL_Flush_graphics();
+}
+
+
+void Begin_line_loop( void )
+{
+   OPENGL_Begin_line_loop();
+}
+
+
+void Begin_line( void )
+{
+   OPENGL_Begin_line();
+}
+
+
+void Begin_line_strip( void )
+{
+	OPENGL_Begin_line_strip();
+}
+
+
+void End_line_loop( void )
+{
+   OPENGL_End_line_loop();
+}
+
+
+void End_line( void )
+{
+   OPENGL_End_line();
+}
+
+
+void End_line_strip( void )
+{
+   OPENGL_End_line_strip();
+}
+
 
 /*************************************************************************
 *                       END OF FALCON DISPLAY ROUTINES                   *

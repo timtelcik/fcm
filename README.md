@@ -27,9 +27,25 @@ FCM version 1.0 was developed and published with the following research document
  * [IRIS GL](https://en.wikipedia.org/wiki/IRIS_GL)
  
 
+## Releases
+
+### FCM 1.0
+
+ * Initial release for MS-DOS with Borland Graphics and IRIX with IRIS GL.
+ 
+
+### FCM 1.0
+
+ * Initial release for Mac OS X with OpenGL.
+ 
+
 ## Known Issues
 
 ### FCM 1.0
+
+ * Potential memory leaks and segmentation fault with 100+ data points.
+
+### FCM 1.1
 
  * Potential memory leaks and segmentation fault with 100+ data points.
 

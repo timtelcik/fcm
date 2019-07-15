@@ -155,6 +155,9 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
+// TODO: Review POSIX header usage
+//       http://en.wikipedia.org/wiki/Unistd.h
+#include <unistd.h>
 
 /* INCLUDE FALCON CONSTANTS HEADER */
 #include "const.h"
@@ -167,6 +170,10 @@
 
 /* INCLUDE FALCON GRAPHICS DISPLAY HEADER */
 #include "display.h"
+
+#define VIEW_WAIT_DURATION 3
+// #define VIEW_WAIT_DURATION 5
+// #define VIEW_WAIT_DURATION 20
 
 
 /*************************************************************************
@@ -190,7 +197,9 @@ INDEX start_seg_two,               /* start of second line segment */
 *			  START OF FALCON MAINLINE                       *
 *************************************************************************/
 
-void main()
+// void main()
+// int main()
+int main(int argc, const char * argv[])
 {
 
 double contour_interval;	 /* contour interval */
@@ -214,100 +223,138 @@ long time_taken;             /* time taken for contouring */
 /* repeat contouring process until user decides to quit */
 do {
 
- /* display title message */
+ // display title message
  Display_title();
 
- /* open the TIN file */
+ // open the TIN file
  Open_tin_file(&tin_file);
 
- /* setup TIN topology in memory */
+ // setup TIN topology in memory
  printf("\nSetting up the TIN point topology ...\n");
  Setup_tin(tin_file,&wxmin,&wymin,&wxmax,&wymax,&zmin,&zmax);
 
- /* close the TIN file */
+ // close the TIN file
  fclose(tin_file);
 
- /* create and sort the TIN edges */
+ // create and sort the TIN edges
  printf("\nCreating and sorting the TIN edges ...\n\n");
  Create_edges();
  Quicksort(&edges[0],0,last_edge);
 
- /* set window to min and max (x,y) coordinates of TIN */
+ // set window to min and max (x,y) coordinates of TIN
  Set_window(wxmin,wymin,wxmax,wymax);
- /* set viewport to allow labelling around window */
+ // set viewport to allow labelling around window
  Set_viewport(vpxmin,vpymin,vpxmax,vpymax);
 
- /* display memory info. to screen */
- printf("Available memory : %ul\n",coreleft());
+ // display memory info. to screen
+ // printf("Available memory : %ul\n",coreleft());
+ printf("Available memory : TODO \n");
 
- /* if debugging then display TIN topology and edges */
+ // if debugging then display TIN topology and edges
 #if DEBUG
      Display_tin_topology();
      Display_tin_edges();
 #endif
 
- /* repeat while the user wants to contour the current TIN */
+ // repeat while the user wants to contour the current TIN
  do {
 
-    /* get contour information */
+    // get contour information
     Get_contour_info( zmin, zmax, &lower_contour, &upper_contour,
 		      &contour_interval);
 
-    /* get smoothing information from the user */
+    // get smoothing information from the user
     Get_smoothing_info( &adjust, &sample );
 
-    /* prompt user to save contours to a data file */
+    // prompt user to save contours to a data file
     Prompt_reply("Do you want to save the contours to a data file",
 		 NO,&save_cont);
 
-    /* open a contour file if required */
-    if ( save_cont == YES )
+    // open a contour file if required
+    if ( save_cont == YES ) {
        Open_cont_file(&cont_file);
+    }
 
-    /* prompt user to display TIN while contouring */
+    // prompt user to display TIN while contouring
     Prompt_reply("Display the TIN while contouring",NO,&display_tin);
 
-    /* activate graphics mode */
+    //
+    // begin render loop
+    //
+
+    // activate graphics mode
     Activate_graphics();
 
     /* display border and border coordinates on screen */
-    Set_colour(WHITE);
+    // Set_colour(WHITE);
+    Set_colour(BLUE);
     Draw_border();
     Draw_border_coords(wxmin,wymin,wxmax,wymax);
 
     /* display contour info. on screen */
-    Set_colour(WHITE);
+    // Set_colour(WHITE);
+    Set_colour(BLUE);
     Draw_cont_info(lower_contour, upper_contour, contour_interval);
 
     /* display the TIN on the screen if required */
-    if ( display_tin == YES )
+    if ( display_tin == YES ) {
        Display_network();
+
+       // flush graphics to screen
+       // Flush_graphics();
+    }
 
     /* get start time */
     time(&start_time);
+
+    // TODO: generate contours before rendering to screen
+
+
+    printf("BEGIN generate contours ... \n");
 
     /* generate contours within contour bounds */
     Generate_contours( lower_contour, upper_contour, contour_interval,
 		       save_cont, cont_file, adjust, sample );
 
+    printf("END generate contours \n");
+
+
+    // flush graphics to screen
+    Flush_graphics();
+
+
     /* get ending time */
     time(&end_time);
 
+
+    printf("BEGIN polling loop ...");
+
     /* prompt and wait for user to exit contour display */
-/*    Set_colour(WHITE);
-    Graphics_pause();*/
-    sleep(20);
+    // Set_colour(WHITE);
+    Set_colour(CYAN);
+	Draw_text( 0.1, 0.1, "** Contouring Finished. Press ESCape. **" );
+    // Graphics_pause();
+    while (Is_graphics_active()) {
+        Poll_events();
+    }
+
+    printf("END polling loop ...");
 
     /* deactivate graphics mode */
     Deactivate_graphics();
 
+    //
+    // end render loop
+    //
+
     /* check if contour file needs to be closed */
-    if ( save_cont == YES )
+    if ( save_cont == YES ) {
        fclose(cont_file);
+    }
 
     /* inform user of the time taken to contour TIN */
     time_taken=difftime(end_time,start_time);
-    printf("\nTime taken to contour TIN : %i seconds\n",time_taken);
+    printf("\nTime taken to contour TIN : %ld seconds\n",time_taken);
 
     /* prompt user to contour the same TIN again */
     Prompt_reply("Do you want to contour this TIN again",NO,
@@ -325,7 +372,8 @@ do {
 } while ( another_tin == YES );
 
 /* display exiting message */
-printf("\n\nFalcon Contour Map 1.0\nEnd of processing.\n\n");
+// printf("\n\nFalcon Contour Map 1.0\nEnd of processing.\n\n");
+printf("\n\n%s\nEnd of processing.\n\n",FALCON_VERSION_LABEL);
 
 }
 
