@@ -26,7 +26,7 @@ CFLAGS= -c -Wall $(INCLUDES)
 #LDFLAGS= -lglfw3 -framework OpenGL
 #LDFLAGS= -v -L /usr/local/lib -lglfw3 -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 LDFLAGS= -v -L /usr/local/lib -lglfw3 -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -framework GLUT
-SOURCES=display.c input.c interpol.c opengl_drv.c mainline.c output.c search.c sort.c topology.c trace.c
+SOURCES=display.c input.c interpol.c opengl_drv.c mainline.c output.c search.c sort.c topology.c track.c
 RM=/bin/rm
 
 OBJECTS=$(SOURCES:.c=.o)
@@ -42,5 +42,5 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean: 
-	$(RM) *.o
+	$(RM) *.o ${EXECUTABLE}
 
