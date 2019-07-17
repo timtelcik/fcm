@@ -30,7 +30,7 @@
 
 **************************************************************************
 *  FALCON CONTOUR MAP VERSION 1.0                                        *
-*  DEVICE DRIVERS FOR SILICON GRAPHICS PERSONAL OPENGL                   *
+*  DEVICE DRIVER FOR SILICON GRAPHICS PERSONAL OPENGL                    *
 *                                                                        *
 *  Written by Tim Telcik                                                 *
 *  Last Update: 5th October 1991                                         *
@@ -73,7 +73,6 @@
 /* INCLUDE OPENGL DEVICE DRIVERS HEADER */
 #include "opengl_drv.h"
 
-// #define WIN_TITLE "FALCON 1.0"
 #define WIN_TITLE FALCON_VERSION_LABEL
 #define WIN_WIDTH 768
 #define WIN_HEIGHT 576

@@ -78,7 +78,7 @@
 #define MIN_SAMPLE 0.1   /* minimum spline sampling interval */
 #define MAX_SAMPLE 10.0  /* maximum spline sampling interval */
 
-#define FALCON_VERSION_LABEL "Falcon Contour Map 1.0"
+#define FALCON_VERSION_LABEL "Falcon Contour Map 1.1"
 
 
 //
