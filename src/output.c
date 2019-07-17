@@ -490,10 +490,10 @@ void Display_title( void )
 // clrscr();
 
 /* display title */
-printf("\t\t\t================================\n");
-printf("\t\t\t Falcon Contour Map Version 1.0 \n");
-printf("\t\t\t Copyright (c) 1991  Tim Telcik \n");
-printf("\t\t\t================================\n");
+printf("\t\t\t=======================================\n");
+printf("\t\t\t     Falcon Contour Map Version 1.1    \n");
+printf("\t\t\t Copyright (c) 1991-present Tim Telcik \n");
+printf("\t\t\t=======================================\n");
 
 } /* -- END OF FUNCTION -- */
 
